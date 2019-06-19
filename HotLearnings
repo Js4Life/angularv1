@@ -1,0 +1,185 @@
+Angular V1 :
+
+Functions are 
+
+abstractions :
+
+var work = function(){
+  console.log('working hard')
+}
+
+// work();
+
+// using Abstraction :
+
+var doWork = function(f) {
+  console.log('starting')
+  
+  try {
+    f();
+  } catch(ex) {
+    console.log(ex);
+  }
+  
+  console.log('end');
+  
+}
+
+doWork(work)
+
+
+build modules : ( disdv : created Global Variables --- > EVIL (Since JS is Dynamically typed language and leads to more confusion)
+
+
+var createWorker = function() {
+    
+  var workCount = 0;  
+  
+  var task1 = function() {
+    workCount++;// implementation details
+    console.log('task1 ' + workCount)
+  }
+    var task2 = function() {
+       workCount++;
+    console.log('task2 '+ workCount)
+  }
+  return {
+    job1:task1,
+    job2:task2  // Object literal Design Pattern : MODULE PATTERN
+  }
+}
+
+var worker = createWorker();
+
+worker.job1();
+worker.job2();
+worker.job2();
+worker.job2();
+worker.job1();
+
+User IFFY: (ZERO GLOBAL Variables)
+
+ (function() {
+   var createWorker = function() {
+
+     var workCount = 0;
+
+     var task1 = function() {
+       workCount += 1; // implementation details
+       console.log('task1 ' + workCount)
+     }
+     var task2 = function() {
+       workCount += 1;
+       console.log('task2 ' + workCount)
+     }
+     return {
+       job1: task1,
+       job2: task2 // Object literal Design Pattern : MODULE PATTERN
+     }
+
+
+   }
+
+
+
+   var worker = createWorker();
+
+   // worker.task1(); // undefined since local scope
+   worker.job1();
+   worker.job2();
+   worker.job2();
+   worker.job2();
+   worker.job1();
+
+
+
+ }());
+ 
+ angular invokes controller functions!!
+ 
+ var mainController = function($scope) {
+	$scope.message = 'Hello';
+	// message is a MODEL.
+ }
+ 
+ use ng-src instead of src in img tag to prevent 404 error.
+ 
+      var person = {
+         firstName : 'Ashwin',
+         lastName: 'Basva',
+         imageSrc: 'http://odetocode.com/images/scott_allen_2.jpg'
+       }
+	
+	$scope.person = person;
+ 
+ HTTP:
+ 
+ $http --> encapsulates http communication (get,post,put,del)
+ can 'ask' for $http inside a controller by just adding $http as another param.
+  
+ All communication is Sync --> it may take 'X' time ---> "Promise"--> .then (some time in future 'response' param)
+ 
+ JSON Response to JavaScript response converted by angular promise $http.
+ 
+    var promise = $http.get('https://api.github.com/users/js4life');
+    var onUserComplete = function(response) {
+        console.log(response);
+        $scope.user = response.data;
+    }
+
+    var onError = function(reason) {
+        console.log(reason);    
+        $scope.error = 'Could not fetch the data!';
+    }
+
+    promise.then(onUserComplete,onError);
+ 
+ 
+ Modules :-
+ 
+ 
+ Controllers usually live in modules
+	- Avoid the global Namespace
+	
+	var app = angular.module('myApp',[])
+	[] --> Dependencies
+	
+	REALITY for it get invoked through IFFY :)
+	
+	(function() {
+
+    var app = angular.module('myApp',[]);
+
+    var mainController = function($scope,$http) {
+
+        var promise = $http.get('https://api.github.com/users/js4life');
+        
+        var onUserComplete = function(response) {
+            console.log(response);
+            $scope.user = response.data;
+        }
+    
+        var onError = function(reason) {
+            console.log(reason);    
+            $scope.error = 'Could not fetch the data!';
+        }
+    
+        promise.then(onUserComplete,onError);
+     
+    
+        $scope.message = 'Hello ASHWIN';
+
+    }
+    app.controller('MainController',['$scope','$http',mainController]) // [MainController] --> Minification and $scope --> n like that
+}());
+
+Views and Directives :
+
+Directives allow for indirect model View Interaction :
+
+ng-model : inputs/Selects/TextArea for 2-way binding
+ 
+ 
+ 
+
+
